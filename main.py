@@ -308,9 +308,9 @@ def jam_paling_dikunjungi():
 
         global_file_result["jam-paling-dikunjungi"]["statistika-deskriptif"] = {
             "sorted": manual_sort(array_data_value),
-            "mean": round(mean(array_data_value), 2),
-            "median": round(median(array_data_value), 2),
-            "modus": round(modus(array_data_value), 2),
+            # "mean": round(mean(array_data_value), 2),
+            # "median": round(median(array_data_value), 2),
+            # "modus": round(modus(array_data_value), 2),
             "minimum": minimum,
             "maximum": maximum
         }
@@ -354,9 +354,9 @@ def distribusi_ukuran():
 
         global_file_result["distribusi-ukuran"]["statistika-deskriptif"] = {
             "sorted": manual_sort(array_data_value),
-            "mean": round(mean(array_data_value), 2),
-            "median": round(median(array_data_value), 2),
-            "modus": round(modus(array_data_value), 2),
+            # "mean": round(mean(array_data_value), 2),
+            # "median": round(median(array_data_value), 2),
+            # "modus": round(modus(array_data_value), 2),
             "minimum": minimum,
             "maximum": maximum
         }

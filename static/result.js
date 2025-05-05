@@ -8,7 +8,6 @@ let activeMenuID = "paling-banyak-dibeli"
 
 function getSubMenuItem() {
 	const list = document.querySelector(".item-list-sidebar").querySelector("ul")
-
 	const items = Array.from(list.children)
 
 	for (let i = 0; i < items.length; ++i) {
@@ -74,12 +73,22 @@ function statistikaDeskriptifFunction(dataLabel, dataQuantity, statisika, table_
 		maximumName.textContent = statisika["maximum"]["name"]
 		maximumQuantity.textContent = statisika["maximum"]["number"]
 
-		const mean = document.querySelector(".mean").querySelector('.quantity')
-		mean.textContent = statisika["mean"]
-		const median = document.querySelector(".median").querySelector('.quantity')
-		median.textContent = statisika["median"]
-		const modus = document.querySelector(".modus").querySelector('.quantity')
-		modus.textContent = statisika["modus"]
+		const mean = document.querySelector(".mean")
+		const median = document.querySelector(".median")
+		const modus = document.querySelector(".modus")
+		if(!statisika["mean"]) {
+			mean.style.display = 'none'
+			median.style.display = 'none'
+			modus.style.display = 'none'
+		} else {
+			mean.style.display = 'unset'
+			median.style.display = 'unset'
+			modus.style.display = 'unset'
+			
+			median.querySelector('.quantity').textContent = statisika["median"]
+			modus.querySelector('.quantity').textContent = statisika["modus"]
+			mean.querySelector('.quantity').textContent = statisika["mean"]
+		}
 	}	
 }
 
@@ -178,49 +187,31 @@ function histogramBar(histogramData) {
             borderRadius: 5,
         }]
     },
+	plugins: [ChartDataLabels],
     options: {
         scales: {
-            x: {
-                ticks: {
-					align: 'center',
-                    stepSize: 10
-                },
-                title: {
-                  display: true,
-                  text: 'price ($)',
-                  font: {
-                      size: 14
-                  }
-                }
+            x: { 
+				ticks: { align: 'center', stepSize: 10 },
+                title: { display: true, text: 'price ($)', font: { size: 14 }}
             }, 
-            y: {
-                title: {
-                  display: true,
-                  text: 'quantity',
-                  font: {
-                      size: 14
-                  }
-                }
-            }
+            y: { title: { display: true, text: 'quantity', font: { size: 14 }}}
         },
         plugins: {
-          legend: {
-              display: false,
-            },
-          tooltip: {
-            callbacks: {
-              title: (items) => {
-                if (!items.length) {
-                  return '';
-                }
-                const item = items[0];
-                const x = item.parsed.x;
-                const min = x - 0.5;
-                const max = x + 0.5;
-                return `Price: $${min} - $${max}`;
-              }
-            }
-          }
+			legend: {display: false,},
+			tooltip: {
+				callbacks: {
+					title: (items) => {
+						if (!items.length) {
+						  return '';
+						}
+						const item = items[0];
+						const x = item.parsed.x;
+						const min = x - 0.5;
+						const max = x + 0.5;
+						return `Price: $${min} - $${max}`;
+              		}
+            	}
+          	}
         }
     }
 	});
@@ -242,16 +233,6 @@ function chart(title, labels, data, { tipe = 'bar', interpolation = 'default', b
 		"#F45B69", "#3A86FF", "#8338EC", "#FF006E", "#FB5607"
    	];
 
-	const chartColors2 = [
-		'rgba(255, 99, 132, 1)',
-      	'rgba(255, 159, 64, 1)',
-      	'rgba(255, 205, 86, 1)',
-      	'rgba(75, 192, 192, 1)',
-      	'rgba(54, 162, 235, 1)',
-      	'rgba(153, 102, 255, 1)',
-      	'rgba(201, 203, 207, 1)',
-	]
-
 	myChart = new Chart(canvas, {
     	type: tipe,
     	data: {
@@ -267,8 +248,19 @@ function chart(title, labels, data, { tipe = 'bar', interpolation = 'default', b
 				backgroundColor: tipe === 'line' ? [borderColor] : chartColors1 
       		}]
     	},
+		plugins: [tipe === 'pie' ? ChartDataLabels : ''],
     	options: {
 			plugins: { 
+				datalabels: {
+ 					formatter: (value, ctx) => {
+                		const datapoints = ctx.chart.data.datasets[0].data
+                		const total = datapoints.reduce((total, datapoint) => total + datapoint, 0)
+                		const percentage = value / total * 100
+
+                		return percentage.toFixed(2) + "%";
+            		},
+            		color: '#000'
+				},
 				title: {
 					display: true,
         			text: title
@@ -293,7 +285,6 @@ function chart(title, labels, data, { tipe = 'bar', interpolation = 'default', b
   });
 }
 
-
 document.addEventListener('DOMContentLoaded', async (ev) => {
 	const mainTitle = document.querySelector(".main-title")
 
@@ -302,7 +293,6 @@ document.addEventListener('DOMContentLoaded', async (ev) => {
 	const json = await data.json()
 	const pizzaTotal = json["pizza_total"]
 	pizzaBar(pizzaTotal["data"], pizzaTotal["statistika-deskriptif"])
-	
 
 	const btnPalingBanyakDibeli = document.querySelector('#paling-banyak-dibeli')
 	btnPalingBanyakDibeli.addEventListener('click', async (ev) => {
