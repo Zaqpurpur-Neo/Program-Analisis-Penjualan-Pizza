@@ -55,7 +55,7 @@ global_file_result = {
     },
     "histogram": {
         "range": [],
-        "data": []
+        "data": {}
     }
 }
 
@@ -67,7 +67,7 @@ menu = [
     ["pendapatan-perbulan", "Pendapatan Perbulan", "Pendapatan perbulan ($)", "fa-calendar-days", False],
     ["jam-paling-dikunjungi", "Jam Paling Dikunjungi", "Jam paling sering dikunjungi", "fa-clock", False],
     ["distribusi-ukuran", "Distribusi Ukuran", "Distribusi ukuran pizza", "fa-chart-simple", False],
-    ["histogram", "Persebaran Histrogram", "Histogram Persebaran Harga Pizza", "fa-square-poll-horizontal", False],
+    ["histogram", "Persebaran Histrogram", "Histogram Persebaran Harga Pizza L Classic di bulan Desember", "fa-square-poll-horizontal", False],
 ]
 
 def manual_sort(arr):
@@ -364,37 +364,45 @@ def distribusi_ukuran():
 
 def histogram():
     if global_file_result["data"] is not None:
-        data = global_file_result["data"]["unit_price"].tolist()
+        data = global_file_result["data"][["unit_price", "pizza_name", "order_date", "pizza_size", "pizza_category"]].values.tolist()
         minimum = 0
         maximum = 0
         for item in data:
-            if minimum == 0:
-                minimum = item
-            elif item < minimum:
-                minimum = item
-            elif item > maximum:
-                maximum = item
+            if item[2].month == 12 and item[3] == 'L' and item[4].lower() == 'classic':
+                if minimum == 0:
+                    minimum = item[0]
+                elif item[0] < minimum:
+                    minimum = item[0]
+                elif item[0] > maximum:
+                    maximum = item[0]
 
         divide = 5
         range_margin = 0.01
         ranged = maximum - minimum
-        ranged_per_item = ranged/divide;
+        ranged_per_item = ranged/divide
 
         for i in range(0, divide+1):
             global_file_result["histogram"]["range"].append(minimum + (ranged_per_item*i))
-            if i < divide: global_file_result["histogram"]["data"].append(0)
 
         for item in data:
-            for i in range(0, divide):
-                data_item = global_file_result["histogram"]["range"]
-                if i == 0 and item >= (data_item[i]) and item <= data_item[i+1]:
-                    global_file_result["histogram"]["data"][i] += 1
+            if item[2].month == 12 and item[3] == 'L' and item[4].lower() == 'classic':
+                for i in range(0, divide):
+                    data_item = global_file_result["histogram"]["range"]
+                    key = str(data_item[i])
+                    if i == 0 and item[0] >= (data_item[i]) and item[0] <= data_item[i+1]:
+                        if key not in global_file_result["histogram"]["data"]:
+                            global_file_result["histogram"]["data"][key] = []
 
-                elif item >= (data_item[i] + range_margin) and item <= data_item[i+1]:
-                    global_file_result["histogram"]["data"][i] += 1
+                        if item[1] not in global_file_result["histogram"]["data"][key]:
+                            global_file_result["histogram"]["data"][key].append(item[1])
 
 
+                    elif item[0] >= (data_item[i] + range_margin) and item[0] <= data_item[i+1]:
+                        if key not in global_file_result["histogram"]["data"]:
+                            global_file_result["histogram"]["data"][key] = []
 
+                        if item[1] not in global_file_result["histogram"]["data"][key]:
+                            global_file_result["histogram"]["data"][key].append(item[1])
 
 @app.route('/', methods=["GET", "POST"])
 def main():

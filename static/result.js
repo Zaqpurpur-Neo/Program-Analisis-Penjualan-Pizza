@@ -163,7 +163,13 @@ function histogramBar(histogramData) {
 		newRange.push(`${range[i]} ----- ${range[i+1]}`)
 	}
 
-	let data = histogramData["data"]
+	console.log(histogramData)
+	let realData = histogramData["data"]
+	let data = []
+
+	for (let item in realData) {
+		data.push(realData[item].length)
+	}
 	
 	const backgroundColor = Array(range.length).fill('rgba(255, 99, 132, 0.2)');
 	const borderColor = Array(range.length).fill('rgba(255, 99, 132, 1)');
