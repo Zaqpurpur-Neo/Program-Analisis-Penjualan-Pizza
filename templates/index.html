@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Data</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./static/home.css">
+  <link rel="icon" href="favicon.png">
+</head>
+<body>
+	<div class="container">
+		<div class="box-container">
+			<h2>Upload File</h2>
+			<input type="file" name="csv-file" id="file-dropper" style="display: none;">
+			<label for="file-dropper" class="file-dropper-label">
+				<div class="box-dropper">
+					<p>Drag and Drop file here.</p>
+				</div>
+			</label>
+			<p>Supported File: XLSX</p>
+			<div class="wrapper-btn">
+				<button class="btn-upload"><span class="text-upload">Upload</span> <div class="loader hidden"></div></button>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="module" src="./static/home.js"></script>
+	
+</html>

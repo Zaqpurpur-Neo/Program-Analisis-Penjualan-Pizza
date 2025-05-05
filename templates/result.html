@@ -1,0 +1,131 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Data</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./static/result.css">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@11.2.4/dist/umd/ag-charts-enterprise.js?t=1745929228452"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script> -->
+</head>
+<body>
+	<div class="container">
+		<div class="two-side">	
+			<div class="sidebar">
+				<div class="title-box">
+					<h2 class="side-title">Dashboard</h2>
+					<p><i class="fa-regular fa-file"></i><span>{{ file_name }}</span></p>
+				</div>
+				<div class="item-list-sidebar">
+					<ul>
+						{% for item in menu_sidebar %}
+						<li>
+							<button id="{{ item[0] }}" value="{{ item[2] }}" class="{{ 'active' if item[4] else '' }}">
+								<i class="fa-solid {{ item[3] }}"></i><span>{{ item[1] }}</span>
+							</button>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+			<div class="main-content">
+				<h1 class="main-title">{{ menu_sidebar[0][2] }}</h1>
+				<div class="two-side top-section">
+					<div class="card maximum">
+						<div class="title-card">
+							<h1>Paling Banyak</h1>
+						</div>
+						<div class="card-body">
+							<p class="item-name">Nama Item</p>
+							<h2 class="quantity">Quantitas</h2>
+						</div>
+					</div>
+					<div class="card minimum">
+						<div class="title-card">
+							<h1>Paling Sedikit</h1>
+						</div>
+						<div class="card-body">
+							<p class="item-name">Nama Item</p>
+							<h2 class="quantity">Quantitas</h2>
+						</div>
+					</div>
+
+					<div class="card mean">
+						<div class="title-card">
+							<h1>Mean</h1>
+						</div>
+						<div class="card-body">
+							<p class="item-name">hasil</p>
+							<h2 class="quantity">Quantitas</h2>	
+						</div>
+					</div>
+					<div class="card median">
+						<div class="title-card">
+							<h1>Median</h1>
+						</div>
+						<div class="card-body">
+							<p class="item-name">hasil</p>
+							<h2 class="quantity">Quantitas</h2>	
+						</div>
+					</div>
+					<div class="card modus">
+						<div class="title-card">
+							<h1>Modus</h1>
+						</div>
+						<div class="card-body">
+							<p class="item-name">hasil</p>
+							<h2 class="quantity">Quantitas</h2>	
+						</div>
+					</div>
+
+
+				</div>
+				<div class="diagram">
+					<div class="card bar-card">
+						<div class="title-card">
+							<h1>Diagram</h1>
+						</div>
+						<div class="card-body">
+							<canvas id="bar-chart" width="400" height="200"></canvas>
+						</div>
+					</div>
+				</div>
+				
+				<div class="statistika-deskriptif" style="">
+					<div class="card">
+						<div class="title-card">
+							<h1>Data Terurut</h1>
+						</div>
+						<div class="card-body">
+							<div class="perhitungan-card">
+								<p class="data-terurut"></p>	
+							</div>
+						</div>
+					</div>
+					<div class="card data-penjualan">
+						<div class="title-card">
+							<h1 class="table-title"></h1>
+						</div>
+						<div class="card-body">
+							<table class="table">
+								<thead>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>			
+</body>
+<script type="module" src="./static/result.js"></script>
+</html>

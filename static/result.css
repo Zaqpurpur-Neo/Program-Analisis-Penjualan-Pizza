@@ -1,0 +1,202 @@
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: 'Outfit', sans-serif;
+	width: 100%;
+	height: 100vh;
+	background: #f2f2f2;
+}
+
+.container {
+	width: 100%;
+	height: 100%;
+}
+
+.two-side {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	gap: 1em
+}
+
+.sidebar {
+	position: relative;
+	padding: 1em;
+	min-width: 14em;
+	color: #100c18;
+	border-right: 1px solid #d1d1d1;
+}
+
+.sidebar .title-box {
+	& .side-title {
+		font-size: 1.75rem;
+	}
+
+	& p {
+		padding-left: .25em;
+		font-size: .85rem;
+		display: flex;
+		gap: .5em;
+		align-items: center;
+	}
+}
+
+.sidebar .item-list-sidebar {
+	position: relative;
+	margin-top: 2em;
+
+	& ul {
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: .5em;
+
+		& button {
+			font-family: 'Outfit', sans-serif;
+			width: 100%;
+			color: #100c18;
+			padding: .75em 1em;
+			border: none;
+			background: none;
+			font-weight: 500;
+			font-size: 1rem;
+			cursor: pointer;
+			border-radius: 10px;
+			text-align: left;
+			display: flex;
+			gap: .75em;
+			align-items: center;
+
+			&:hover {
+				background: #e2e2e2;
+			}
+		}
+
+		& button.active {
+			background: #7340d7;
+			color: #fff;
+		}
+	}
+}
+
+.main-content {
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 2em;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+	gap: 1em
+}
+
+::-webkit-scrollbar-track {
+	display: none;
+}
+
+.main-content .main-title {
+	position: relative;
+	font-weight: 600;
+	font-size: 1.75rem;
+	margin-bottom: 1em;
+}
+
+canvas {
+	padding: 1.5em;
+	width: 800px;
+	height: 400px;
+	border: 1.5px solid #d1d1d1;
+	border-radius: 10px;
+	display: block;
+	background: white;
+}
+
+
+.card {	
+	position: relative;
+	width: 100%;
+	border-radius: 10px;
+	box-shadow: 0 4px 4px #dfdfdf;
+	overflow: hidden;
+	max-width: 65em;
+	background: white;
+}
+
+.card .title-card {
+	background: #7340d7;
+	color: #fff;
+	padding: 1em;
+}
+
+.card .card-body {
+	background: white;
+	padding: .75em;
+}
+
+.card h1 {
+	font-weight: 500;
+	font-size: 1.5rem;
+}
+
+.table thead {
+	vertical-align: bottom;
+}
+
+.table thead th, .table tbody td {
+	padding: .5em;
+	font-size: 1.15rem;
+}
+
+.table thead tr:hover th, .table tbody tr:hover td {
+	background: #eaeaea;
+}
+
+.table thead tr {
+	border: none;
+	border-top: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.table tbody tr:nth-of-type(even) {
+	background: #f0f0f0
+}
+
+.table th {
+	font-weight: 400;
+	text-align: left;
+}
+
+.table {
+	position: relative;
+	width: 100%;
+	border-collapse: collapse;
+	caption-side: bottom;
+}
+
+.perhitungan-card {
+	position: relative;
+	max-width: 20em;
+}
+
+.data-terurut {
+	width: 60em;
+	white-space: normal;
+	word-wrap: break-word;
+}
+
+.statistika-deskriptif {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;	
+	box-sizing: border-box;
+}
+
+.quantity {
+	font-size: 2em;
+	font-weight: 500;
+}
