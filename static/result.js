@@ -164,11 +164,8 @@ function pizzaSize(pizzaData, statisika) {
 function histogramBar(histogramData) {
 	const range = histogramData["range"]
 	const newRange = []
-	for (let i = 0; i < range.length - 1; ++i) {
-		// newRange.push(`${range[i]} ----- ${range[i+1]}`)
-	}
 
-	console.log(histogramData)
+	// console.log(histogramData)
 	let realData = histogramData["data"]
 	let data = []
 
@@ -394,17 +391,30 @@ document.addEventListener('DOMContentLoaded', async (ev) => {
 	const formHistogram = document.querySelector('.form-histogram')
 	formHistogram.addEventListener('submit', async ev => {
 		ev.preventDefault();
+		document.querySelector(".loader").classList.toggle("hidden");
 
 		const formData = new FormData(ev.currentTarget)
-
 		const data = await fetch('/api/result/histogram', { method: 'POST', body: formData })
-		const json = await data.json()
-	
-		const histogramData = json["histogram"]
-		histogramBar(histogramData)
-			
-		activeMenuID = btnHistogram.id
-		mainTitle.textContent = json['title']
+
+		try {
+			const json = await data.json()
+
+			const histogramData = json["histogram"]
+			histogramBar(histogramData)
+
+			document.querySelector(".loader").classList.toggle("hidden");
+				
+			activeMenuID = btnHistogram.id
+			mainTitle.textContent = json['title']
+		} catch (err) {	
+			document.querySelector(".loader").classList.toggle("hidden");
+
+			const alertBox = document.querySelector('.alert-box')
+			alertBox.style.transform = 'translateY(0)'
+			alertBox.querySelector('button').addEventListener('click', ev => {
+				alertBox.style.transform = 'translateY(-6em)'
+			})
+		}
 
 	})
 })

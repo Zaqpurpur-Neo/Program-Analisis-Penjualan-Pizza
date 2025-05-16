@@ -390,7 +390,7 @@ def histogram(kategori, ukuran, bulan):
                 elif item[0] > maximum:
                     maximum = item[0]
 
-        print(maximum, minimum)
+        print(maximum, minimum, length)
 
         k = 1 + 3.3 * math.log10(length)
         divide = round(k)
@@ -398,12 +398,13 @@ def histogram(kategori, ukuran, bulan):
         ranged = maximum - minimum
         ranged_per_item = round(ranged/k)
 
-        ondoted = 0;
+        ondoted = 1
         while ranged_per_item == 0:
             ondoted += 1
+
             ranged_per_item = round(ranged/k, ondoted)
 
-        print(ranged_per_item, divide, k, length)
+        print(f"{ranged_per_item}, {divide}, {k}, {length}, {ondoted}")
         print(kategori, ukuran, bulan)
 
         price = minimum
