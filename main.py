@@ -13,10 +13,12 @@ TODO:
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 import pandas as pd
+import math
 import json
 
 app = Flask(__name__)
 app.json.sort_keys = False
+bulan = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"]
 global_file_result = {
     "file_name": "",
     "data": None,
@@ -55,7 +57,12 @@ global_file_result = {
     },
     "histogram": {
         "range": [],
-        "data": {}
+        "data": {},
+        "histo_data": {
+            "kategori": 'classic',
+            "ukuran": 'L',
+            "bulan": 12
+        }
     }
 }
 
@@ -119,7 +126,7 @@ def modus(arr):
 def to_json(file_result):
     return json.loads(file_result.to_json(orient="records"))
 
-def filtering_name():
+def paling_banyak_dibeli():
     if global_file_result["data"] is not None:
         data= global_file_result["data"][["pizza_name", "quantity"]].values.tolist()
         for item in data:
@@ -216,7 +223,6 @@ def pendapatan_perbulan():
         data = global_file_result["data"][["order_date", "total_price", "quantity"]].values.tolist()
 
         array_data_value = []
-        bulan = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"]
         total_pendapatan_bulan_ini = 0
         jumlah_penjualan = 0
         bulan_saat_ini = bulan[0]
@@ -362,13 +368,21 @@ def distribusi_ukuran():
         }
 
 
-def histogram():
+def histogram(kategori, ukuran, bulan):
     if global_file_result["data"] is not None:
+        global_file_result["histogram"]["range"] = []
+        global_file_result["histogram"]["data"] = {}
+
         data = global_file_result["data"][["unit_price", "pizza_name", "order_date", "pizza_size", "pizza_category"]].values.tolist()
         minimum = 0
         maximum = 0
+        length = 0
+
+        all_prices = []
         for item in data:
-            if item[2].month == 12 and item[3] == 'L' and item[4].lower() == 'classic':
+            if item[2].month == int(bulan) and item[3] == ukuran.upper() and item[4].lower() == kategori:
+                all_prices.append(item[0])
+                length += 1
                 if minimum == 0:
                     minimum = item[0]
                 elif item[0] < minimum:
@@ -376,16 +390,30 @@ def histogram():
                 elif item[0] > maximum:
                     maximum = item[0]
 
-        divide = 5
-        range_margin = 0.01
-        ranged = maximum - minimum
-        ranged_per_item = ranged/divide
+        print(maximum, minimum)
 
+        k = 1 + 3.3 * math.log10(length)
+        divide = round(k)
+        # range_margin = 0.01
+        ranged = maximum - minimum
+        ranged_per_item = round(ranged/k)
+
+        ondoted = 0;
+        while ranged_per_item == 0:
+            ondoted += 1
+            ranged_per_item = round(ranged/k, ondoted)
+
+        print(ranged_per_item, divide, k, length)
+        print(kategori, ukuran, bulan)
+
+        price = minimum
         for i in range(0, divide+1):
-            global_file_result["histogram"]["range"].append(minimum + (ranged_per_item*i))
+            global_file_result["histogram"]["range"].append(price)
+            global_file_result["histogram"]["data"][str(price)] = []
+            price += ranged_per_item
 
         for item in data:
-            if item[2].month == 12 and item[3] == 'L' and item[4].lower() == 'classic':
+            if item[2].month == int(bulan) and item[3] == ukuran.upper() and item[4].lower() == kategori:
                 for i in range(0, divide):
                     data_item = global_file_result["histogram"]["range"]
                     key = str(data_item[i])
@@ -393,16 +421,17 @@ def histogram():
                         if key not in global_file_result["histogram"]["data"]:
                             global_file_result["histogram"]["data"][key] = []
 
-                        if item[1] not in global_file_result["histogram"]["data"][key]:
-                            global_file_result["histogram"]["data"][key].append(item[1])
+                        # if item[1] not in global_file_result["histogram"]["data"][key]:
+                        global_file_result["histogram"]["data"][key].append(item[1])
 
 
-                    elif item[0] >= (data_item[i] + range_margin) and item[0] <= data_item[i+1]:
+                    elif item[0] >= (data_item[i]) and item[0] <= data_item[i+1]:
                         if key not in global_file_result["histogram"]["data"]:
                             global_file_result["histogram"]["data"][key] = []
 
-                        if item[1] not in global_file_result["histogram"]["data"][key]:
-                            global_file_result["histogram"]["data"][key].append(item[1])
+                        # if item[1] not in global_file_result["histogram"]["data"][key]:
+                        global_file_result["histogram"]["data"][key].append(item[1])
+
 
 @app.route('/', methods=["GET", "POST"])
 def main():
@@ -434,7 +463,7 @@ def home():
         file_result = pd.read_excel(byte)
         global_file_result["data"] = file_result
 
-        filtering_name()
+        paling_banyak_dibeli()
         return redirect('/api/result')
 
 @app.route('/api/result/perkategori', methods=['GET'])
@@ -477,15 +506,28 @@ def distribusi_ukuran_page():
         return jsonify(distribusi_ukuran=global_file_result['distribusi-ukuran'])
     return jsonify(distribusi_ukuran=global_file_result['distribusi-ukuran'])
 
-@app.route('/api/result/histogram', methods=['GET'])
+@app.route('/api/result/histogram', methods=['GET', 'POST'])
 def histogram_page():
     if global_file_result['data'] is None:
         return redirect('/api/result')
+   
+    histo_data = global_file_result['histogram']['histo_data']
+    if request.method == 'GET':
+        histogram(histo_data['kategori'], histo_data['ukuran'], histo_data['bulan'])
+        global_file_result['histogram']['histo_data'] = histo_data
+        
+    else:
+        histo_data['ukuran'] = request.form['ukuran']
+        histo_data['kategori'] = request.form['kategori']
+        histo_data['bulan'] = request.form['bulan']
+        histogram(histo_data['kategori'], histo_data['ukuran'], histo_data['bulan'])
+
+        global_file_result['histogram']['histo_data'] = histo_data
     
-    if len(global_file_result['histogram']['range']) == 0:
-        histogram();
-        return jsonify(histogram=global_file_result['histogram'])
-    return jsonify(histogram=global_file_result['histogram'])
+    return jsonify(histogram=global_file_result['histogram'], title=f"Histogram Persebaran Harga Pizza {histo_data['ukuran']} {histo_data['kategori']} di bulan {bulan[int(histo_data['bulan']) - 1]}")
+
+    # if len(global_file_result['histogram']['range']) == 0:
+        # return jsonify(histogram=global_file_result['histogram'])
 
 
 

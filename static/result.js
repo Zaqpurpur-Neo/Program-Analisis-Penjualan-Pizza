@@ -2,9 +2,12 @@ const canvas = document.querySelector("#bar-chart")
 const barCard = document.querySelector(".diagram")
 const tabelPenjualan = document.querySelector(".statistika-deskriptif")
 const topSection = document.querySelector(".top-section")
+const histogramOption = document.querySelector(".histogram-option")
 const sideBarItem = []
 let myChart;
 let activeMenuID = "paling-banyak-dibeli"
+
+//////////////////////////////////////////////////////////////
 
 function getSubMenuItem() {
 	const list = document.querySelector(".item-list-sidebar").querySelector("ul")
@@ -22,7 +25,9 @@ function getSubMenuItem() {
 			if(btn.id === "histogram") {
 				tabelPenjualan.style.display = 'none',
 				topSection.style.display = 'none'
+				histogramOption.style.display = 'block'
 			} else {
+				histogramOption.style.display = 'none'
 				tabelPenjualan.style.display = 'flex',
 				topSection.style.display = 'flex'
 			}
@@ -160,15 +165,21 @@ function histogramBar(histogramData) {
 	const range = histogramData["range"]
 	const newRange = []
 	for (let i = 0; i < range.length - 1; ++i) {
-		newRange.push(`${range[i]} ----- ${range[i+1]}`)
+		// newRange.push(`${range[i]} ----- ${range[i+1]}`)
 	}
 
 	console.log(histogramData)
 	let realData = histogramData["data"]
 	let data = []
 
+	let i = 0
 	for (let item in realData) {
-		data.push(realData[item].length)
+		if(realData[item].length > 0) {
+			data.push(realData[item].length)
+			newRange.push(range[i])
+		}
+
+		i++
 	}
 	
 	const backgroundColor = Array(range.length).fill('rgba(255, 99, 132, 0.2)');
@@ -223,7 +234,7 @@ function histogramBar(histogramData) {
 	});
 }
 
-
+/////////////////////////////////////////////////////////////////////////
 
 function chart(title, labels, data, { tipe = 'bar', interpolation = 'default', borderColor = '#7340d7', pointStyle = 'circle', scales = {} }) {
 	let delayed;
@@ -378,5 +389,22 @@ document.addEventListener('DOMContentLoaded', async (ev) => {
 			activeMenuID = btnHistogram.id
 			mainTitle.textContent = btnHistogram.value
 		}
+	})
+
+	const formHistogram = document.querySelector('.form-histogram')
+	formHistogram.addEventListener('submit', async ev => {
+		ev.preventDefault();
+
+		const formData = new FormData(ev.currentTarget)
+
+		const data = await fetch('/api/result/histogram', { method: 'POST', body: formData })
+		const json = await data.json()
+	
+		const histogramData = json["histogram"]
+		histogramBar(histogramData)
+			
+		activeMenuID = btnHistogram.id
+		mainTitle.textContent = json['title']
+
 	})
 })
